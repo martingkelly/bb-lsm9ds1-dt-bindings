@@ -1,0 +1,44 @@
+/dts-v1/;
+
+#include "am33xx.dtsi"
+#include "am335x-bone-common.dtsi"
+#include "am335x-boneblack-common.dtsi"
+#include <dt-bindings/interrupt-controller/irq.h>
+
+/ {
+	model = "TI AM335x BeagleBone Black";
+	compatible = "ti,am335x-bone-black", "ti,am335x-bone", "ti,am33xx";
+};
+
+&am33xx_pinmux {
+	i2c1_pins: pinmux_i2c1_pins {
+		pinctrl-single,pins = <
+			AM33XX_IOPAD(0x958, PIN_INPUT_PULLUP | MUX_MODE2)	/* spi0_d1.i2c1_sda */
+			AM33XX_IOPAD(0x95c, PIN_INPUT_PULLUP | MUX_MODE2)	/* spi0_cs0.i2c1_scl */
+		>;
+	};
+
+	gpio3_pins: gpio3_pins {
+		pinctrl-single,pins = <
+			AM33XX_IOPAD(0x9a4, PIN_INPUT_PULLDOWN | MUX_MODE7) /* conf_mcasp0_fsr.gpio3_19 */
+		>;
+	};
+};
+
+&i2c1 {
+	status = "okay";
+	clock-frequency = <100000>;
+
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c1_pins>;
+
+	lsm9ds1@6b {
+		model = "ST LSM9DS1";
+		compatible = "st,lsm9ds1-gyro";
+		reg = <0x6b>;
+
+		/* Interrupt for GPIO3_19 */
+		interrupt-parent = <&gpio3>;
+		interrupts = <19 IRQ_TYPE_EDGE_RISING>;
+	};
+};
