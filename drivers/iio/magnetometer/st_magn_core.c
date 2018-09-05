@@ -378,6 +378,74 @@ static const struct st_sensor_settings st_magn_sensors_settings[] = {
 		.multi_read_bit = false,
 		.bootime = 2,
 	},
+	{
+		.wai = 0x3d,
+		.wai_addr = ST_SENSORS_DEFAULT_WAI_ADDRESS,
+		.sensors_supported = {
+			[0] = LSM9DS1_MAGN_DEV_NAME,
+		},
+		.ch = (struct iio_chan_spec *)st_magn_2_16bit_channels,
+		.odr = {
+			/* Fast ODR mode currently not supported. */
+			.addr = 0x20,
+			.mask = 0x1c,
+			.odr_avl = {
+				{ .hz = 5, .value = 0x03 },
+				{ .hz = 10, .value = 0x04 },
+				{ .hz = 20, .value = 0x05 },
+				{ .hz = 40, .value = 0x06 },
+				{ .hz = 80, .value = 0x07 },
+			},
+		},
+		.pw = {
+			.addr = 0x22,
+			.mask = 0x03,
+			.value_on = 0x00,
+			.value_off = 0x03,
+		},
+		.fs = {
+			.addr = 0x21,
+			.mask = 0x60,
+			.fs_avl = {
+				[0] = {
+					.num = ST_MAGN_FS_AVL_4000MG,
+					.value = 0x00,
+					.gain = 140,
+				},
+				[1] = {
+					.num = ST_MAGN_FS_AVL_8000MG,
+					.value = 0x01,
+					.gain = 290,
+				},
+				[2] = {
+					.num = ST_MAGN_FS_AVL_12000MG,
+					.value = 0x02,
+					.gain = 430,
+				},
+				[3] = {
+					.num = ST_MAGN_FS_AVL_16000MG,
+					.value = 0x03,
+					.gain = 580,
+				},
+			},
+		},
+		.bdu = {
+			.addr = 0x24,
+			.mask = 0x40,
+		},
+		.drdy_irq = {
+			.stat_drdy = {
+				.addr = ST_SENSORS_DEFAULT_STAT_ADDR,
+				.mask = 0x07,
+			},
+		},
+		.sim = {
+			.addr = 0x22,
+			.value = BIT(2),
+		},
+		.multi_read_bit = true,
+		.bootime = 2,
+	},
 };
 
 static int st_magn_read_raw(struct iio_dev *indio_dev,
